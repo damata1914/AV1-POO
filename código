@@ -1,0 +1,150 @@
+using System;
+using System.Collections.Generic;
+
+// ===== CLASSES DE MENSAGEM =====
+
+abstract class Mensagem
+{
+    public string Texto { get; set; }
+    public DateTime DataEnvio { get; set; }
+
+    public Mensagem(string texto)
+    {
+        Texto = texto;
+        DataEnvio = DateTime.Now;
+    }
+
+    public abstract void ExibirDetalhes();
+}
+
+class MensagemTexto : Mensagem
+{
+    public MensagemTexto(string texto) : base(texto) { }
+
+    public override void ExibirDetalhes()
+    {
+        Console.WriteLine($"[Texto] Enviada em: {DataEnvio} | Conteúdo: {Texto}");
+    }
+}
+
+class MensagemVideo : Mensagem
+{
+    public string Arquivo { get; set; }
+    public string Formato { get; set; }
+    public int DuracaoSegundos { get; set; }
+
+    public MensagemVideo(string texto, string arquivo, string formato, int duracao) : base(texto)
+    {
+        Arquivo = arquivo;
+        Formato = formato;
+        DuracaoSegundos = duracao;
+    }
+
+    public override void ExibirDetalhes()
+    {
+        Console.WriteLine($"[Vídeo] Enviada em: {DataEnvio} | Texto: {Texto} | Arquivo: {Arquivo} | Formato: {Formato} | Duração: {DuracaoSegundos}s");
+    }
+}
+
+class MensagemFoto : Mensagem
+{
+    public string Arquivo { get; set; }
+    public string Formato { get; set; }
+
+    public MensagemFoto(string texto, string arquivo, string formato) : base(texto)
+    {
+        Arquivo = arquivo;
+        Formato = formato;
+    }
+
+    public override void ExibirDetalhes()
+    {
+        Console.WriteLine($"[Foto] Enviada em: {DataEnvio} | Texto: {Texto} | Arquivo: {Arquivo} | Formato: {Formato}");
+    }
+}
+
+class MensagemArquivo : Mensagem
+{
+    public string Arquivo { get; set; }
+    public string Formato { get; set; }
+
+    public MensagemArquivo(string texto, string arquivo, string formato) : base(texto)
+    {
+        Arquivo = arquivo;
+        Formato = formato;
+    }
+
+    public override void ExibirDetalhes()
+    {
+        Console.WriteLine($"[Arquivo] Enviada em: {DataEnvio} | Texto: {Texto} | Arquivo: {Arquivo} | Formato: {Formato}");
+    }
+}
+
+// ===== CLASSES DE CANAIS =====
+
+abstract class CanalComunicacao
+{
+    public abstract void EnviarMensagem(Mensagem mensagem, string destinatario);
+}
+
+class WhatsApp : CanalComunicacao
+{
+    public override void EnviarMensagem(Mensagem mensagem, string numeroTelefone)
+    {
+        Console.WriteLine($"[WhatsApp] Enviando para número: {numeroTelefone}");
+        mensagem.ExibirDetalhes();
+    }
+}
+
+class Telegram : CanalComunicacao
+{
+    public override void EnviarMensagem(Mensagem mensagem, string destinatario)
+    {
+        Console.WriteLine($"[Telegram] Enviando para: {destinatario}");
+        mensagem.ExibirDetalhes();
+    }
+}
+
+class Facebook : CanalComunicacao
+{
+    public override void EnviarMensagem(Mensagem mensagem, string usuario)
+    {
+        Console.WriteLine($"[Facebook] Enviando para usuário: {usuario}");
+        mensagem.ExibirDetalhes();
+    }
+}
+
+class Instagram : CanalComunicacao
+{
+    public override void EnviarMensagem(Mensagem mensagem, string usuario)
+    {
+        Console.WriteLine($"[Instagram] Enviando para usuário: {usuario}");
+        mensagem.ExibirDetalhes();
+    }
+}
+
+// ===== EXEMPLO DE USO =====
+
+class Program
+{
+    static void Main()
+    {
+        // Instanciar canais
+        CanalComunicacao whatsapp = new WhatsApp();
+        CanalComunicacao telegram = new Telegram();
+        CanalComunicacao facebook = new Facebook();
+        CanalComunicacao instagram = new Instagram();
+
+        // Criar mensagens
+        Mensagem texto = new MensagemTexto("Olá, tudo bem?");
+        Mensagem video = new MensagemVideo("Vídeo novo!", "video.mp4", "mp4", 30);
+        Mensagem foto = new MensagemFoto("Veja esta foto", "foto.jpg", "jpg");
+        Mensagem arquivo = new MensagemArquivo("Documento importante", "arquivo.pdf", "pdf");
+
+        // Enviar mensagens
+        whatsapp.EnviarMensagem(texto, "+551199999999");
+        telegram.EnviarMensagem(video, "@usuario_telegram");
+        facebook.EnviarMensagem(foto, "usuario_facebook");
+        instagram.EnviarMensagem(arquivo, "usuario_instagram");
+    }
+}
